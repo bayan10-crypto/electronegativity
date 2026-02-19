@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Электртерістілік | Оқу сайты</title>
+  <style>
+    :root{
+      --bg:#06101a;
+      --panel:#0c1f2f;
+      --text:#e8f0ff;
+      --muted:#a9bfdc;
+      --accent:#53ffa9;
+      --accent2:#66b3ff;
+      --warn:#ffcc66;
+      --good:#57f287;
+      --bad:#ff6b6b;
+      --border:rgba(255,255,255,.12);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 650px at 15% 10%, rgba(83,255,169,.18), transparent 55%),
+        radial-gradient(900px 600px at 85% 20%, rgba(102,179,255,.18), transparent 55%),
+        linear-gradient(180deg, #050f18, #06101a 40%, #040d14);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(6,16,26,.88), rgba(6,16,26,.55));
+      border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:1200px; margin:0 auto; padding:16px 18px;}
+    .topbar{display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;}
+    .brand{display:flex; align-items:center; gap:12px; user-select:none;}
+    .logo{
+      width:40px; height:40px; border-radius:14px;
+      background:
+        radial-gradient(circle at 30% 30%, var(--accent), rgba(83,255,169,.1)),
+        radial-gradient(circle at 70% 70%, var(--accent2), rgba(102,179,255,.1));
+      border:1px solid rgba(255,255,255,.18);
+      box-shadow: 0 12px 35px rgba(83,255,169,.10);
+      position:relative; overflow:hidden;
+    }
+    .logo::after{
+      content:""; position:absolute; inset:-30%;
+      background: conic-gradient(from 0deg, transparent, rgba(255,255,255,.35), transparent);
+      animation: spin 6s linear infinite;
+      opacity:.55;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg);} }
+    .brand h1{margin:0; font-size:16px; letter-spacing:.2px;}
+    .brand p{margin:0; font-size:12px; color:var(--muted)}
+    nav{display:flex; gap:10px; flex-wrap:wrap;}
+    .tab{
+      border:1px solid var(--border);
+      background: rgba(12,31,47,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-weight:800;
+      font-size:13px;
+      cursor:pointer;
+      transition:.2s transform, .2s border-color, .2s background;
+    }
+    .tab:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.22); }
+    .tab.active{
+      border-color: rgba(83,255,169,.35);
+      background: linear-gradient(90deg, rgba(83,255,169,.18), rgba(102,179,255,.18));
+      box-shadow: 0 14px 40px rgba(83,255,169,.08);
+    }
+
+    main{ padding:22px 18px 70px; }
+    .grid{ max-width:1200px; margin:0 auto; display:grid; gap:16px; }
+    .hero{
+      padding:18px;
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(12,31,47,.75), rgba(8,22,34,.62));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero h2{margin:0 0 6px; font-size:20px;}
+    .hero p{margin:0; color:var(--muted); line-height:1.55;}
+    .panel{
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(12,31,47,.78), rgba(8,22,34,.62));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .panel h3{margin:0 0 10px; font-size:16px;}
+    .muted{ color:var(--muted); }
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center;}
+    .btn{
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(10,27,41,.9);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:.2s transform,.2s border-color;
+      font-weight:800;
+      font-size:13px;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(102,179,255,.35); }
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(83,255,169,.20), rgba(102,179,255,.18));
+      border-color: rgba(83,255,169,.35);
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(10,27,41,.55);
+      color: rgba(255,255,255,.86);
+      font-family: var(--mono);
+      font-size:12px;
+    }
+    .hidden{display:none !important;}
+
+    /* ===== Periodic table ===== */
+    .ptable-wrap{
+      overflow:auto;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background: rgba(6,16,26,.35);
+      padding:12px;
+    }
+    .ptable{
+      display:grid;
+      grid-template-columns: repeat(18, 64px);
+      grid-auto-rows: 64px;
+      gap:8px;
+      min-width: 18*64px;
+      justify-content:start;
+    }
+    .cell{
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;
+      background: rgba(12,31,47,.75);
+      padding:8px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      cursor:pointer;
+      transition:.15s transform, .15s border-color;
+      position:relative;
+    }
+    .cell:hover{ transform: translateY(-2px); border-color: rgba(83,255,169,.35); }
+    .cell .z{ font-family:var(--mono); font-size:10px; color:rgba(255,255,255,.70); }
+    .cell .sym{ font-size:18px; font-weight:900; letter-spacing:.5px; }
+    .cell .en{ font-family:var(--mono); font-size:11px; color:rgba(255,255,255,.82); }
+    .cell.na{ cursor:default; opacity:.35; }
+    .legend{
+      display:flex; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .key{
+      display:flex; align-items:center; gap:8px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      padding:8px 10px;
+      background: rgba(10,27,41,.45);
+      font-size:12px;
+      color: var(--muted);
+    }
+    .swatch{ width:14px; height:14px; border-radius:6px; border:1px solid rgba(255,255,255,.18); }
+
+    /* color by EN range */
+    .en-low{ background: linear-gradient(180deg, rgba(83,255,169,.10), rgba(12,31,47,.75)); }
+    .en-mid{ background: linear-gradient(180deg, rgba(102,179,255,.10), rgba(12,31,47,.75)); }
+    .en-high{ background: linear-gradient(180deg, rgba(255,204,102,.10), rgba(12,31,47,.75)); }
+    .en-top{ background: linear-gradient(180deg, rgba(255,107,107,.12), rgba(12,31,47,.75)); }
+
+    .side{
+      border:1px solid var(--border);
+      border-radius:16px;
+      background: rgba(6,16,26,.35);
+      padding:12px;
+    }
+    .side h4{margin:0 0 8px; font-size:14px;}
+    .side .big{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(12,31,47,.65);
+    }
+    .big .sym{font-size:28px; font-weight:1000;}
+    .big .meta{font-family:var(--mono); color:rgba(255,255,255,.85); font-size:12px; text-align:right;}
+    .note{ color:var(--muted); line-height:1.6; font-size:13px; margin-top:10px; }
+
+    .split{
+      display:grid; grid-template-columns: 1.3fr .7fr; gap:14px;
+    }
+    @media (max-width: 980px){ .split{ grid-template-columns:1fr; } .ptable{ grid-template-columns: repeat(18, 56px); grid-auto-rows:56px; } }
+
+    /* ===== Matching ===== */
+    .match-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width: 900px){ .match-grid{ grid-template-columns:1fr; } }
+    .match-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:14px;
+      background: rgba(6,16,26,.35);
+    }
+    select{
+      background: rgba(12,31,47,.85);
+      color: var(--text);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:12px;
+      padding:10px 10px;
+      font-family: var(--mono);
+      font-weight:800;
+      width: 160px;
+      max-width: 100%;
+    }
+    .result{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid var(--border);
+      background: rgba(10,27,41,.55);
+      font-family: var(--mono);
+      color: rgba(255,255,255,.88);
+    }
+
+    /* ===== Quiz ===== */
+    .q{
+      padding:12px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background: rgba(6,16,26,.35);
+      margin-bottom:12px;
+    }
+    .q h4{ margin:0 0 10px; font-size:14px; }
+    .opt{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(12,31,47,.65);
+      cursor:pointer;
+      margin:8px 0;
+      transition:.15s transform, .15s border-color;
+    }
+    .opt:hover{ transform: translateY(-1px); border-color: rgba(102,179,255,.30); }
+    .opt input{ margin-top:2px; }
+
+    footer{
+      opacity:.8;
+      text-align:center;
+      padding:24px 18px;
+      color: var(--muted);
+      font-size:12px;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Электртерістілік • Химиялық оқу платформасы</h1>
+          <p>Периодтық кесте • Сәйкестендіру • Тест</p>
+        </div>
+      </div>
+      <nav>
+        <button class="tab active" data-view="table">1) Кесте+конспект</button>
+        <button class="tab" data-view="match">2) Сәйкестендіру</button>
+        <button class="tab" data-view="quiz">3) Тест</button>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="grid">
+
+    <!-- 1) TABLE + CONSPECT -->
+    <section id="view-table" class="view">
+      <div class="hero">
+        <h2>1-бөлім: Периодтық кестедегі электртерістілік (Pauling)</h2>
+        <p>
+          Төмендегі кестеде элементтің <b>таңбасы</b> және <b>электртерістілік мәні (EN)</b> берілген.
+          Белгілі мәні жоқ элементтерде <b>—</b> көрсетіледі. Элементті бассаңыз, оң жақта мәлімет шығады.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="split">
+          <div>
+            <div class="ptable-wrap">
+              <div id="ptable" class="ptable" aria-label="Periodic table"></div>
+            </div>
+
+            <div class="legend">
+              <div class="key"><span class="swatch" style="background:rgba(83,255,169,.35)"></span> EN ≤ 1.0 (төмен)</div>
+              <div class="key"><span class="swatch" style="background:rgba(102,179,255,.35)"></span> 1.0–2.0 (орташа)</div>
+              <div class="key"><span class="swatch" style="background:rgba(255,204,102,.35)"></span> 2.0–3.0 (жоғары)</div>
+              <div class="key"><span class="swatch" style="background:rgba(255,107,107,.35)"></span> ≥ 3.0 (өте жоғары)</div>
+            </div>
+
+            <div style="margin-top:14px" class="side">
+              <h4>Қысқаша конспект</h4>
+              <div class="note">
+                <b>Электртерістілік (χ)</b> — атомның ковалентті байланыста электрон жұбын өзіне тарту қабілеті. <br><br>
+                <b>Период бойынша</b> солдан оңға қарай <b>артуға</b> бейім (ядро заряды өседі, радиус кішірейеді). <br>
+                <b>Топ бойынша</b> жоғарыдан төмен қарай <b>кемиді</b> (радиус ұлғаяды, экранирлеу артады). <br><br>
+                χ айырмасы байланыс табиғатына әсер етеді: <br>
+                • Δχ ≈ 0 → <b>полюссіз ковалентті</b> <br>
+                • 0.4–1.7 → <b>полюсті ковалентті</b> <br>
+                • ≥ 1.7 → <b>иондық сипат</b> басым (шартты шекара). <br><br>
+                Ең жоғары χ: <b>F (3.98)</b>. Инертті газдарда жиі мән берілмейді (—).
+              </div>
+            </div>
+          </div>
+
+          <div class="side">
+            <h4>Таңдалған элемент</h4>
+            <div class="big" id="pickedBox">
+              <div class="sym" id="pickedSym">—</div>
+              <div class="meta" id="pickedMeta">Z: —<br>EN: —</div>
+            </div>
+            <div class="note" id="pickedNote">
+              Элементті кестеден таңдаңыз.
+            </div>
+
+            <div style="margin-top:12px" class="row">
+              <button class="btn primary" id="pickRandom">Кездейсоқ элемент</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2) MATCHING -->
+    <section id="view-match" class="view hidden">
+      <div class="hero">
+        <h2>2-бөлім: Сәйкестендіру тапсырмасы</h2>
+        <p>
+          Тапсырма: берілген элементтерді сәйкес электртерістілік мәнімен сәйкестендіріңіз.
+          Соңында <b>«Тексеру»</b> басыңыз.
+        </p>
+      </div>
+
+      <div class="panel">
+        <div class="match-grid" id="matchGrid"></div>
+
+        <div class="row" style="margin-top:12px;">
+          <button class="btn primary" id="checkMatch">Тексеру</button>
+          <button class="btn" id="resetMatch">Қайта араластыру</button>
+        </div>
+
+        <div class="result" id="matchResult" style="margin-top:12px;">Нәтиже: әзірге тексерілмеді.</div>
+        <p class="muted" style="margin-top:10px; line-height:1.6;">
+          Кеңес: F ең жоғары, ал сілтілік металдарда (Na, K) төмен болады.
+        </p>
+      </div>
+    </section>
+
+    <!-- 3) QUIZ -->
+    <section id="view-quiz" class="view hidden">
+      <div class="hero">
+        <h2>3-бөлім: Тест тапсырмасы</h2>
+        <p>8 сұрақ. Жауап беріп, <b>«Нәтижені шығару»</b> батырмасын басыңыз.</p>
+      </div>
+
+      <div class="panel">
+        <div id="quizContainer"></div>
+
+        <div class="row" style="margin-top:12px;">
+          <button class="btn primary" id="gradeQuiz">Нәтижені шығару</button>
+          <button class="btn" id="resetQuiz">Қайта бастау</button>
+        </div>
+
+        <div class="result" id="quizResult" style="margin-top:12px;">Нәтиже: әзірге есептелмеді.</div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer>Электртерістілік • Pauling шкаласы • Бір файлдық сайт (HTML/CSS/JS)</footer>
+
+<script>
+  /***********************
+   * Navigation
+   ***********************/
+  const tabs = document.querySelectorAll(".tab");
+  const views = {
+    table: document.getElementById("view-table"),
+    match: document.getElementById("view-match"),
+    quiz: document.getElementById("view-quiz"),
+  };
+
+  tabs.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      tabs.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const v = btn.dataset.view;
+      Object.values(views).forEach(el=>el.classList.add("hidden"));
+      views[v].classList.remove("hidden");
+      window.scrollTo({top:0, behavior:"smooth"});
+    });
+  });
+
+  /***********************
+   * Periodic table data (positions + EN)
+   * NOTE: EN values are common Pauling values for many elements.
+   * Some elements (esp. noble gases / superheavy) may be left as null (—).
+   ***********************/
+  const elements = [
+    // period 1
+    {z:1,  sym:"H",  name:"Сутек",      p:1, g:1,  en:2.20},
+    {z:2,  sym:"He", name:"Гелий",      p:1, g:18, en:null},
+
+    // period 2
+    {z:3,  sym:"Li", name:"Литий",      p:2, g:1,  en:0.98},
+    {z:4,  sym:"Be", name:"Бериллий",   p:2, g:2,  en:1.57},
+    {z:5,  sym:"B",  name:"Бор",        p:2, g:13, en:2.04},
+    {z:6,  sym:"C",  name:"Көміртек",   p:2, g:14, en:2.55},
+    {z:7,  sym:"N",  name:"Азот",       p:2, g:15, en:3.04},
+    {z:8,  sym:"O",  name:"Оттек",      p:2, g:16, en:3.44},
+    {z:9,  sym:"F",  name:"Фтор",       p:2, g:17, en:3.98},
+    {z:10, sym:"Ne", name:"Неон",       p:2, g:18, en:null},
+
+    // period 3
+    {z:11, sym:"Na", name:"Натрий",     p:3, g:1,  en:0.93},
+    {z:12, sym:"Mg", name:"Магний",     p:3, g:2,  en:1.31},
+    {z:13, sym:"Al", name:"Алюминий",   p:3, g:13, en:1.61},
+    {z:14, sym:"Si", name:"Кремний",    p:3, g:14, en:1.90},
+    {z:15, sym:"P",  name:"Фосфор",     p:3, g:15, en:2.19},
+    {z:16, sym:"S",  name:"Күкірт",     p:3, g:16, en:2.58},
+    {z:17, sym:"Cl", name:"Хлор",       p:3, g:17, en:3.16},
+    {z:18, sym:"Ar", name:"Аргон",      p:3, g:18, en:null},
+
+    // period 4
+    {z:19, sym:"K",  name:"Калий",      p:4, g:1,  en:0.82},
+    {z:20, sym:"Ca", name:"Кальций",    p:4, g:2,  en:1.00},
+    {z:21, sym:"Sc", name:"Скандий",    p:4, g:3,  en:1.36},
+    {z:22, sym:"Ti", name:"Титан",      p:4, g:4,  en:1.54},
+    {z:23, sym:"V",  name:"Ванадий",    p:4, g:5,  en:1.63},
+    {z:24, sym:"Cr", name:"Хром",       p:4, g:6,  en:1.66},
+    {z:25, sym:"Mn", name:"Марганец",   p:4, g:7,  en:1.55},
+    {z:26, sym:"Fe", name:"Темір",      p:4, g:8,  en:1.83},
+    {z:27, sym:"Co", name:"Кобальт",    p:4, g:9,  en:1.88},
+    {z:28, sym:"Ni", name:"Никель",     p:4, g:10, en:1.91},
+    {z:29, sym:"Cu", name:"Мыс",        p:4, g:11, en:1.90},
+    {z:30, sym:"Zn", name:"Мырыш",      p:4, g:12, en:1.65},
+    {z:31, sym:"Ga", name:"Галлий",     p:4, g:13, en:1.81},
+    {z:32, sym:"Ge", name:"Германий",   p:4, g:14, en:2.01},
+    {z:33, sym:"As", name:"Мышьяк",     p:4, g:15, en:2.18},
+    {z:34, sym:"Se", name:"Селен",      p:4, g:16, en:2.55},
+    {z:35, sym:"Br", name:"Бром",       p:4, g:17, en:2.96},
+    {z:36, sym:"Kr", name:"Криптон",    p:4, g:18, en:3.00},
+
+    // period 5 (негізгілері)
+    {z:37, sym:"Rb", name:"Рубидий",    p:5, g:1,  en:0.82},
+    {z:38, sym:"Sr", name:"Стронций",   p:5, g:2,  en:0.95},
+    {z:39, sym:"Y",  name:"Иттрий",     p:5, g:3,  en:1.22},
+    {z:40, sym:"Zr", name:"Цирконий",   p:5, g:4,  en:1.33},
+    {z:41, sym:"Nb", name:"Ниобий",     p:5, g:5,  en:1.60},
+    {z:42, sym:"Mo", name:"Молибден",   p:5, g:6,  en:2.16},
+    {z:43, sym:"Tc", name:"Технеций",   p:5, g:7,  en:1.90},
+    {z:44, sym:"Ru", name:"Рутений",    p:5, g:8,  en:2.20},
+    {z:45, sym:"Rh", name:"Родий",      p:5, g:9,  en:2.28},
+    {z:46, sym:"Pd", name:"Палладий",   p:5, g:10, en:2.20},
+    {z:47, sym:"Ag", name:"Күміс",      p:5, g:11, en:1.93},
+    {z:48, sym:"Cd", name:"Кадмий",     p:5, g:12, en:1.69},
+    {z:49, sym:"In", name:"Индий",      p:5, g:13, en:1.78},
+    {z:50, sym:"Sn", name:"Қалайы",     p:5, g:14, en:1.96},
+    {z:51, sym:"Sb", name:"Сурьма",     p:5, g:15, en:2.05},
+    {z:52, sym:"Te", name:"Теллур",     p:5, g:16, en:2.10},
+    {z:53, sym:"I",  name:"Иод",        p:5, g:17, en:2.66},
+    {z:54, sym:"Xe", name:"Ксенон",     p:5, g:18, en:2.60},
+
+    // period 6 (негізгілері)
+    {z:55, sym:"Cs", name:"Цезий",      p:6, g:1,  en:0.79},
+    {z:56, sym:"Ba", name:"Барий",      p:6, g:2,  en:0.89},
+    // Lanthanides placeholder box at (p6,g3) and group 3 area
+    {z:57, sym:"La*", name:"Лантаноидтар", p:6, g:3, en:null},
+    {z:72, sym:"Hf", name:"Гафний",     p:6, g:4,  en:1.30},
+    {z:73, sym:"Ta", name:"Тантал",     p:6, g:5,  en:1.50},
+    {z:74, sym:"W",  name:"Вольфрам",   p:6, g:6,  en:2.36},
+    {z:75, sym:"Re", name:"Рений",      p:6, g:7,  en:1.90},
+    {z:76, sym:"Os", name:"Осмий",      p:6, g:8,  en:2.20},
+    {z:77, sym:"Ir", name:"Иридий",     p:6, g:9,  en:2.20},
+    {z:78, sym:"Pt", name:"Платина",    p:6, g:10, en:2.28},
+    {z:79, sym:"Au", name:"Алтын",      p:6, g:11, en:2.54},
+    {z:80, sym:"Hg", name:"Сынап",      p:6, g:12, en:2.00},
+    {z:81, sym:"Tl", name:"Таллий",     p:6, g:13, en:1.62},
+    {z:82, sym:"Pb", name:"Қорғасын",   p:6, g:14, en:2.33},
+    {z:83, sym:"Bi", name:"Висмут",     p:6, g:15, en:2.02},
+    {z:84, sym:"Po", name:"Полоний",    p:6, g:16, en:2.00},
+    {z:85, sym:"At", name:"Астат",      p:6, g:17, en:2.20},
+    {z:86, sym:"Rn", name:"Радон",      p:6, g:18, en:null},
+
+    // period 7 (негізгілері)
+    {z:87, sym:"Fr", name:"Франций",    p:7, g:1,  en:0.70},
+    {z:88, sym:"Ra", name:"Радий",      p:7, g:2,  en:0.90},
+    {z:89, sym:"Ac*", name:"Актиноидтар", p:7, g:3, en:null},
+    {z:104,sym:"Rf", name:"Резерфордий",p:7, g:4,  en:null},
+    {z:105,sym:"Db", name:"Дубний",     p:7, g:5,  en:null},
+    {z:106,sym:"Sg", name:"Сиборгий",   p:7, g:6,  en:null},
+    {z:107,sym:"Bh", name:"Борий",      p:7, g:7,  en:null},
+    {z:108,sym:"Hs", name:"Хассий",     p:7, g:8,  en:null},
+    {z:109,sym:"Mt", name:"Мейтнерий",  p:7, g:9,  en:null},
+    {z:110,sym:"Ds", name:"Дармштадтий",p:7, g:10, en:null},
+    {z:111,sym:"Rg", name:"Рентгений",  p:7, g:11, en:null},
+    {z:112,sym:"Cn", name:"Коперниций", p:7, g:12, en:null},
+    {z:113,sym:"Nh", name:"Нихоний",    p:7, g:13, en:null},
+    {z:114,sym:"Fl", name:"Флеровий",   p:7, g:14, en:null},
+    {z:115,sym:"Mc", name:"Московий",   p:7, g:15, en:null},
+    {z:116,sym:"Lv", name:"Ливерморий", p:7, g:16, en:null},
+    {z:117,sym:"Ts", name:"Теннессин",  p:7, g:17, en:null},
+    {z:118,sym:"Og", name:"Оганесон",   p:7, g:18, en:null},
+  ];
+
+  function enClass(en){
+    if(en === null || en === undefined) return "";
+    if(en <= 1.0) return "en-low";
+    if(en < 2.0) return "en-mid";
+    if(en < 3.0) return "en-high";
+    return "en-top";
+  }
+
+  const ptable = document.getElementById("ptable");
+  const pickedSym = document.getElementById("pickedSym");
+  const pickedMeta = document.getElementById("pickedMeta");
+  const pickedNote = document.getElementById("pickedNote");
+
+  function renderPeriodic(){
+    ptable.innerHTML = "";
+    // make empty grid cells by using CSS grid placement
+    elements.forEach(el=>{
+      const cell = document.createElement("div");
+      cell.className = "cell " + enClass(el.en);
+      cell.style.gridColumn = String(el.g);
+      cell.style.gridRow = String(el.p);
+      cell.dataset.z = el.z;
+      cell.innerHTML = `
+        <div class="z">${el.z}</div>
+        <div class="sym">${el.sym}</div>
+        <div class="en">EN: ${el.en === null ? "—" : el.en.toFixed(2)}</div>
+      `;
+      cell.addEventListener("click", ()=>{
+        pickElement(el);
+      });
+      ptable.appendChild(cell);
+    });
+  }
+
+  function pickElement(el){
+    pickedSym.textContent = el.sym;
+    pickedMeta.innerHTML = `Z: ${el.z}<br>EN: ${el.en === null ? "—" : el.en.toFixed(2)}`;
+    if(el.en === null){
+      pickedNote.textContent =
+        `${el.name}: бұл жерде EN мәні көрсетілмеген (кейбір инертті газдар/аса ауыр элементтер).`;
+    }else{
+      let trend = "";
+      if(el.en >= 3.0) trend = "Өте жоғары EN → электронды қатты тартады (бейметалл қасиеті басым).";
+      else if(el.en >= 2.0) trend = "Жоғары EN → полюсті ковалентті байланыстарға жиі әкеледі.";
+      else if(el.en >= 1.0) trend = "Орташа EN → металл/бейметалл аралық сипат болуы мүмкін.";
+      else trend = "Төмен EN → электрон беруге бейім (металл қасиеті басым).";
+      pickedNote.textContent = `${el.name}. ${trend}`;
+    }
+  }
+
+  document.getElementById("pickRandom").addEventListener("click", ()=>{
+    const known = elements.filter(e=>e.en !== null);
+    const el = known[Math.floor(Math.random()*known.length)];
+    pickElement(el);
+  });
+
+  renderPeriodic();
+
+  /***********************
+   * Matching task
+   ***********************/
+  const matchPairs = [
+    {sym:"F",  en:3.98},
+    {sym:"O",  en:3.44},
+    {sym:"N",  en:3.04},
+    {sym:"Cl", en:3.16},
+    {sym:"C",  en:2.55},
+    {sym:"S",  en:2.58},
+    {sym:"H",  en:2.20},
+    {sym:"Na", en:0.93},
+    {sym:"Mg", en:1.31},
+    {sym:"K",  en:0.82},
+  ];
+
+  const matchGrid = document.getElementById("matchGrid");
+  const matchResult = document.getElementById("matchResult");
+
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]] = [a[j],a[i]];
+    }
+    return a;
+  }
+
+  function renderMatch(){
+    matchGrid.innerHTML = "";
+    matchResult.textContent = "Нәтиже: әзірге тексерілмеді.";
+    const values = shuffle(matchPairs.map(x=>x.en));
+
+    matchPairs.forEach((pair, idx)=>{
+      const row = document.createElement("div");
+      row.className = "match-item";
+      const select = document.createElement("select");
+      select.dataset.sym = pair.sym;
+      select.innerHTML = `<option value="">Таңдаңыз…</option>` + values.map(v=>`<option value="${v}">${Number(v).toFixed(2)}</option>`).join("");
+      row.innerHTML = `<div class="badge">Элемент: ${pair.sym}</div>`;
+      row.appendChild(select);
+      matchGrid.appendChild(row);
+    });
+  }
+
+  function checkMatch(){
+    let correct = 0;
+    const total = matchPairs.length;
+    const selects = matchGrid.querySelectorAll("select");
+    selects.forEach(sel=>{
+      const sym = sel.dataset.sym;
+      const truth = matchPairs.find(x=>x.sym===sym)?.en;
+      const val = sel.value ? Number(sel.value) : null;
+      if(val !== null && Math.abs(val - truth) < 1e-9) correct++;
+    });
+    const pct = Math.round((correct/total)*100);
+    matchResult.innerHTML = `Нәтиже: <b>${correct}/${total}</b> (${pct}%).`;
+  }
+
+  document.getElementById("checkMatch").addEventListener("click", checkMatch);
+  document.getElementById("resetMatch").addEventListener("click", renderMatch);
+  renderMatch();
+
+  /***********************
+   * Quiz
+   ***********************/
+  const quiz = [
+    {
+      q:"Электртерістілік дегеніміз не?",
+      options:[
+        "Атомның массасын сипаттайды",
+        "Атомның электрон жұбын өзіне тарту қабілеті",
+        "Атом ядросындағы нейтрон саны",
+        "Заттың ерігіштігі"
+      ],
+      a:1
+    },
+    {
+      q:"Период бойынша (солдан оңға) электртерістілік қалай өзгереді?",
+      options:["Кемиді", "Өзгермейді", "Артады", "Тек металдарда өседі"],
+      a:2
+    },
+    {
+      q:"Топ бойынша (жоғарыдан төмен) электртерістілік қалай өзгереді?",
+      options:["Артады", "Кемиді", "Өзгермейді", "Тек бейметалдарда кемиді"],
+      a:1
+    },
+    {
+      q:"Ең жоғары электртерістілікке ие элемент:",
+      options:["O", "Cl", "F", "N"],
+      a:2
+    },
+    {
+      q:"Δχ≈0 болса байланыс қандай болады?",
+      options:["Иондық", "Полюссіз ковалентті", "Полюсті ковалентті", "Металдық"],
+      a:1
+    },
+    {
+      q:"Na (0.93) және Cl (3.16) жұбында қандай байланыс сипаты басым?",
+      options:["Полюссіз ковалентті", "Полюсті ковалентті", "Иондық сипат басым", "Сутектік байланыс"],
+      a:2
+    },
+    {
+      q:"Электртерістілік айырмасы артқанда, байланыс полярлығы…",
+      options:["Азаяды", "Өзгермейді", "Артады", "Тек газдарда артады"],
+      a:2
+    },
+    {
+      q:"Қай қатарда электртерістілік жалпы алғанда жоғары болады?",
+      options:["Сілтілік металдар", "Өтпелі металдар", "Галогендер", "Сілтілік жер металдар"],
+      a:2
+    }
+  ];
+
+  const quizContainer = document.getElementById("quizContainer");
+  const quizResult = document.getElementById("quizResult");
+
+  function renderQuiz(){
+    quizContainer.innerHTML = "";
+    quiz.forEach((item, idx)=>{
+      const qEl = document.createElement("div");
+      qEl.className = "q";
+      qEl.innerHTML = `<h4>${idx+1}. ${item.q}</h4>`;
+      item.options.forEach((opt, j)=>{
+        const id = `q${idx}_o${j}`;
+        const label = document.createElement("label");
+        label.className = "opt";
+        label.setAttribute("for", id);
+        label.innerHTML = `
+          <input type="radio" name="q${idx}" id="${id}" value="${j}">
+          <div>${opt}</div>
+        `;
+        qEl.appendChild(label);
+      });
+      quizContainer.appendChild(qEl);
+    });
+    quizResult.textContent = "Нәтиже: әзірге есептелмеді.";
+  }
+
+  function gradeQuiz(){
+    let score=0;
+    quiz.forEach((item, idx)=>{
+      const chosen = document.querySelector(`input[name="q${idx}"]:checked`);
+      const val = chosen ? Number(chosen.value) : null;
+      if(val === item.a) score++;
+    });
+    const pct = Math.round((score/quiz.length)*100);
+    quizResult.innerHTML = `Нәтиже: <b>${score}/${quiz.length}</b> (${pct}%).`;
+  }
+
+  document.getElementById("gradeQuiz").addEventListener("click", gradeQuiz);
+  document.getElementById("resetQuiz").addEventListener("click", renderQuiz);
+  renderQuiz();
+</script>
+</body>
+</html>
